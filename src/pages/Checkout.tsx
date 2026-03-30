@@ -7,7 +7,7 @@ import {
   QrCode, Copy, CreditCard, Check, Loader2,
   Shield, CalendarCheck, Lock, RefreshCw, Clock,
   BarChart3, Users, ShieldCheck, ChevronDown, ChevronUp,
-  AlertTriangle, Star, X,
+  AlertTriangle, Star, X, Sparkles,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 const deboraPhoto = "";
@@ -62,14 +62,15 @@ const PIX_CODE =
 const FOUNDER_DISCOUNT = 0.4;
 
 const BENEFITS = [
-  "Dashboard de preços OPME com dados de referência",
-  "Boletim semanal de inteligência por Débora Soares",
-  "Checklists interativos de auditoria e compliance",
-  "Templates profissionais prontos para uso",
-  "Sessão mensal ao vivo de Q&A",
-  "Comunidade exclusiva de WhatsApp",
-  "Acervo completo de boletins",
-  "Preço de fundador travado para sempre",
+  { text: "Dashboard de preços OPME com dados de referência", special: false },
+  { text: "Deb.ai — assistente inteligente 24h treinado por Débora Soares", special: true },
+  { text: "Boletim semanal de inteligência por Débora Soares", special: false },
+  { text: "Checklists interativos de auditoria e compliance", special: false },
+  { text: "Templates profissionais prontos para uso", special: false },
+  { text: "Sessão mensal ao vivo de Q&A", special: false },
+  { text: "Comunidade exclusiva de WhatsApp", special: false },
+  { text: "Acervo completo de boletins", special: false },
+  { text: "Preço de fundador travado para sempre", special: false },
 ];
 
 const TRUST_SEALS = [
@@ -277,11 +278,22 @@ const Checkout = () => {
         </p>
         <div className="space-y-2.5">
           {BENEFITS.map((b) => (
-            <div key={b} className="flex items-start gap-2.5">
-              <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue)" }}>
-                <Check size={12} />
-              </div>
-              <span className="text-sm leading-snug" style={{ color: "var(--text-secondary)" }}>{b}</span>
+            <div key={b.text} className="flex items-start gap-2.5">
+              {b.special ? (
+                <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: "rgba(192,0,126,0.1)", color: "var(--ds-magenta)" }}>
+                  <Sparkles size={12} />
+                </div>
+              ) : (
+                <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue)" }}>
+                  <Check size={12} />
+                </div>
+              )}
+              <span className="text-sm leading-snug" style={{ color: "var(--text-secondary)", fontWeight: b.special ? 600 : 400 }}>
+                {b.text}
+                {b.special && (
+                  <span className="ml-1 text-[9px] font-semibold px-1 py-0.5 rounded" style={{ backgroundColor: "rgba(192,0,126,0.15)", color: "var(--ds-magenta)" }}>IA</span>
+                )}
+              </span>
             </div>
           ))}
         </div>
