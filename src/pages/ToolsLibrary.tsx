@@ -5,8 +5,6 @@ import {
   FileText, BarChart2, Search, Table2, BookOpen, ListChecks, Map,
   CheckCircle2, Sparkles,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 /* ------------------------------------------------------------------ */
 /*  Types & Data                                                       */
@@ -190,6 +188,13 @@ function saveCheckedState(state: Record<string, boolean>) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Animation                                                          */
+/* ------------------------------------------------------------------ */
+
+const cardSpring = { type: "spring" as const, stiffness: 300, damping: 30, mass: 0.8 };
+const accordionSpring = { type: "spring" as const, stiffness: 400, damping: 35 };
+
+/* ------------------------------------------------------------------ */
 /*  Checkbox component                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -202,7 +207,10 @@ function CheckItem({ id, label, checked, onChange }: {
   return (
     <label
       htmlFor={id}
-      className="flex items-start gap-3 py-2.5 px-1 rounded-lg cursor-pointer hover:bg-[#F8FAFB] transition-colors group"
+      className="flex items-start gap-3 py-2.5 px-2 rounded-sm cursor-pointer transition-colors group"
+      style={{ backgroundColor: "transparent" }}
+      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(26, 34, 53, 0.5)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
     >
       <div className="relative mt-0.5 shrink-0">
         <input
@@ -212,7 +220,13 @@ function CheckItem({ id, label, checked, onChange }: {
           onChange={(e) => onChange(id, e.target.checked)}
           className="sr-only peer"
         />
-        <div className="w-5 h-5 rounded-md border-2 border-[#E5E7EB] peer-checked:border-[#00C2A8] peer-checked:bg-[#00C2A8] transition-all duration-200 flex items-center justify-center group-hover:border-[#00C2A8]/50">
+        <div
+          className="w-[18px] h-[18px] rounded flex items-center justify-center transition-all duration-200"
+          style={{
+            border: checked ? "none" : "1.5px solid var(--border-default)",
+            backgroundColor: checked ? "var(--ds-blue)" : "transparent",
+          }}
+        >
           <motion.svg
             width="12"
             height="12"
@@ -235,9 +249,14 @@ function CheckItem({ id, label, checked, onChange }: {
           </motion.svg>
         </div>
       </div>
-      <span className={`text-sm leading-relaxed transition-colors duration-200 ${
-        checked ? "text-[#6B7280] line-through" : "text-[#1A1A2E]"
-      }`}>
+      <span
+        className="text-sm leading-relaxed transition-all duration-200"
+        style={{
+          color: checked ? "var(--text-tertiary)" : "var(--text-secondary)",
+          textDecoration: checked ? "line-through" : "none",
+          opacity: checked ? 0.5 : 1,
+        }}
+      >
         {label}
       </span>
     </label>
@@ -254,16 +273,22 @@ function ProgressBar({ checked, total }: { checked: number; total: number }) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+      <div
+        className="flex-1 h-1 rounded-full overflow-hidden"
+        style={{ backgroundColor: "var(--bg-tertiary)" }}
+      >
         <motion.div
           className="h-full rounded-full"
-          style={{ backgroundColor: isComplete ? "#10B981" : "#00C2A8" }}
+          style={{ backgroundColor: isComplete ? "var(--success)" : "var(--ds-blue)" }}
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
-      <span className="font-mono-metric text-xs text-[#6B7280] shrink-0 w-12 text-right">
+      <span
+        className="font-mono-metric text-xs shrink-0 w-12 text-right"
+        style={{ color: "var(--text-tertiary)" }}
+      >
         {checked}/{total}
       </span>
     </div>
@@ -308,34 +333,53 @@ function ChecklistCard({ checklist, checkedState, onToggle, onReset }: {
       layout
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-[#E5E7EB] shadow-card hover:shadow-card-hover transition-shadow duration-200"
+      transition={cardSpring}
+      className="rounded-lg transition-all duration-200"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        border: `1px solid ${expanded ? "var(--border-active)" : "var(--border-default)"}`,
+      }}
+      whileHover={{
+        borderColor: "var(--border-active)",
+        boxShadow: "0 0 30px var(--ds-blue-glow)",
+      }}
     >
       {/* Collapsed header */}
-      <div
-        className="p-5 cursor-pointer"
-        onClick={() => setExpanded(!expanded)}
-      >
+      <div className="p-6 cursor-pointer" onClick={() => setExpanded(!expanded)}>
         <div className="flex items-start gap-4">
-          <div className="w-11 h-11 rounded-lg bg-[#E6FAF7] flex items-center justify-center shrink-0">
-            <Icon size={22} className="text-[#00C2A8]" />
+          <div
+            className="w-12 h-12 rounded-md flex items-center justify-center shrink-0"
+            style={{ backgroundColor: "rgba(5, 89, 181, 0.1)", color: "var(--ds-blue)" }}
+          >
+            <Icon size={24} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5">
-              <h3 className="text-base font-semibold text-[#1A1A2E]">{checklist.title}</h3>
+              <h3
+                className="text-lg font-medium"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {checklist.title}
+              </h3>
               {isComplete && (
-                <motion.div
+                <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold"
+                  style={{
+                    backgroundColor: "rgba(16, 185, 129, 0.15)",
+                    color: "var(--success)",
+                  }}
                 >
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border text-[11px]">
-                    <CheckCircle2 size={11} className="mr-1" />
-                    Completo!
-                  </Badge>
-                </motion.div>
+                  <CheckCircle2 size={11} className="mr-1" />
+                  Completo!
+                </motion.span>
               )}
             </div>
-            <p className="text-sm text-[#6B7280] mt-0.5">{checklist.description}</p>
+            <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>
+              {checklist.description}
+            </p>
             <div className="mt-3">
               <ProgressBar checked={checkedCount} total={total} />
             </div>
@@ -344,8 +388,9 @@ function ChecklistCard({ checklist, checkedState, onToggle, onReset }: {
             animate={{ rotate: expanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
             className="shrink-0 mt-1"
+            style={{ color: "var(--text-tertiary)" }}
           >
-            <ChevronDown size={20} className="text-[#6B7280]" />
+            <ChevronDown size={20} />
           </motion.div>
         </div>
       </div>
@@ -357,16 +402,26 @@ function ChecklistCard({ checklist, checkedState, onToggle, onReset }: {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={accordionSpring}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 space-y-5">
-              <div className="border-t border-[#E5E7EB]" />
+            <div className="px-6 pb-6 space-y-5">
+              <div style={{ borderTop: "1px solid var(--border-default)" }} />
 
               {checklist.categories.map((category, catIdx) => (
                 <div key={category.title}>
-                  {catIdx > 0 && <div className="border-t border-[#E5E7EB] mb-4" />}
-                  <h4 className="text-sm font-semibold text-[#0F2B3C] mb-2">{category.title}</h4>
+                  {catIdx > 0 && (
+                    <div className="mb-4" style={{ borderTop: "1px solid var(--border-default)" }} />
+                  )}
+                  <h4
+                    className="text-sm font-semibold uppercase mb-2"
+                    style={{
+                      color: "var(--text-tertiary)",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {category.title}
+                  </h4>
                   <div className="space-y-0.5">
                     {category.items.map((item) => (
                       <CheckItem
@@ -382,15 +437,27 @@ function ChecklistCard({ checklist, checkedState, onToggle, onReset }: {
               ))}
 
               <div className="flex justify-end pt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
                   onClick={(e) => { e.stopPropagation(); handleReset(); }}
-                  className={`text-xs ${confirmReset ? "text-red-600 hover:text-red-700 hover:bg-red-50" : "text-[#6B7280] hover:text-[#1A1A2E]"}`}
+                  className="inline-flex items-center text-xs font-medium px-2.5 py-1.5 rounded-sm transition-colors"
+                  style={{
+                    color: confirmReset ? "var(--danger)" : "var(--text-tertiary)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (confirmReset) {
+                      e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+                    } else {
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    if (!confirmReset) e.currentTarget.style.color = "var(--text-tertiary)";
+                  }}
                 >
                   <RotateCcw size={13} className="mr-1.5" />
                   {confirmReset ? "Confirmar reset?" : "Resetar"}
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -406,16 +473,31 @@ function ChecklistCard({ checklist, checkedState, onToggle, onReset }: {
 
 function ComingSoonCard({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 opacity-60 cursor-default select-none">
+    <div
+      className="rounded-lg p-5 cursor-default select-none"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        border: "1px solid var(--border-default)",
+        opacity: 0.4,
+      }}
+    >
       <div className="flex items-start gap-3">
-        <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
-          <Icon size={18} className="text-[#6B7280]" />
+        <div
+          className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
+          style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}
+        >
+          <Icon size={18} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-[#1A1A2E]">{title}</p>
-          <Badge className="mt-1.5 text-[10px] bg-gray-100 text-[#6B7280] border-transparent">
+          <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+            {title}
+          </p>
+          <span
+            className="inline-block mt-1.5 text-[10px] font-medium px-2 py-0.5 rounded"
+            style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}
+          >
             Em breve
-          </Badge>
+          </span>
         </div>
       </div>
     </div>
@@ -449,21 +531,28 @@ export default function ToolsLibrary() {
   }, []);
 
   return (
-    <div className="bg-[#F8FAFB] min-h-screen">
-      <div className="max-w-5xl mx-auto px-5 py-8 space-y-10">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-primary)" }}>
+      <div className="max-w-5xl mx-auto px-5 py-10 space-y-12">
         {/* Header */}
         <div>
-          <h2 className="text-2xl font-bold text-[#1A1A2E]">Ferramentas e Recursos</h2>
-          <p className="text-[#6B7280] mt-1">
+          <h2
+            className="font-display text-4xl md:text-[40px] font-normal"
+            style={{ color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.1 }}
+          >
+            Ferramentas e Recursos
+          </h2>
+          <p className="text-base mt-2" style={{ color: "var(--text-secondary)" }}>
             Checklists, templates e guias práticos para profissionais de OPME-DMI
           </p>
         </div>
 
         {/* Checklists section */}
         <section>
-          <div className="flex items-center gap-2.5 mb-4">
-            <Sparkles size={18} className="text-[#00C2A8]" />
-            <h3 className="text-lg font-semibold text-[#1A1A2E]">Checklists Interativos</h3>
+          <div className="flex items-center gap-2.5 mb-5">
+            <Sparkles size={18} style={{ color: "var(--ds-blue)" }} />
+            <h3 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+              Checklists Interativos
+            </h3>
           </div>
           <div className="space-y-4">
             {checklists.map((cl, i) => (
@@ -471,7 +560,7 @@ export default function ToolsLibrary() {
                 key={cl.id}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ ...cardSpring, delay: i * 0.08 }}
               >
                 <ChecklistCard
                   checklist={cl}
@@ -486,7 +575,9 @@ export default function ToolsLibrary() {
 
         {/* Templates section */}
         <section>
-          <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Templates e Documentos</h3>
+          <h3 className="text-base font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
+            Templates e Documentos
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {templates.map((t) => (
               <ComingSoonCard key={t.title} title={t.title} icon={t.icon} />
@@ -496,7 +587,9 @@ export default function ToolsLibrary() {
 
         {/* Guides section */}
         <section>
-          <h3 className="text-lg font-semibold text-[#1A1A2E] mb-4">Guias Regulatórios</h3>
+          <h3 className="text-base font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
+            Guias Regulatórios
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {guides.map((g) => (
               <ComingSoonCard key={g.title} title={g.title} icon={g.icon} />

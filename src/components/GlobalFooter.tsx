@@ -19,25 +19,46 @@ const contactLinks = [
 
 const GlobalFooter = () => {
   return (
-    <footer className="bg-[#0F2B3C] text-white">
-      <div className="max-w-7xl mx-auto px-5 py-14">
+    <footer
+      className="border-t"
+      style={{
+        backgroundColor: "#080C15",
+        borderColor: "var(--border-default)",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-5 py-16 lg:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <p className="font-bold text-lg mb-1">Radar OPME</p>
-            <p className="text-sm text-white/50 mb-3">by DS Treinamentos</p>
-            <p className="text-sm text-white/40 leading-relaxed max-w-xs">
+            <p className="font-bold text-lg mb-1" style={{ color: "var(--text-primary)" }}>
+              Radar OPME
+            </p>
+            <p className="text-sm mb-3" style={{ color: "var(--text-tertiary)" }}>
+              by DS Treinamentos
+            </p>
+            <p className="text-sm leading-relaxed max-w-xs" style={{ color: "var(--text-tertiary)" }}>
               Dados, ferramentas e inteligência para profissionais de OPME-DMI
             </p>
           </div>
 
           {/* Platform */}
           <div>
-            <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-4">Plataforma</p>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-4"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Plataforma
+            </p>
             <ul className="space-y-2.5">
               {platformLinks.map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-white/60 hover:text-[#00C2A8] transition-colors">
+                  <Link
+                    to={l.path}
+                    className="text-sm transition-colors"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -47,11 +68,22 @@ const GlobalFooter = () => {
 
           {/* Ecosystem */}
           <div>
-            <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-4">Ecossistema DS</p>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-4"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Ecossistema DS
+            </p>
             <ul className="space-y-2.5">
               {ecosystemLinks.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-sm text-white/60 hover:text-[#00C2A8] transition-colors">
+                  <a
+                    href={l.href}
+                    className="text-sm transition-colors"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
+                  >
                     {l.label}
                   </a>
                 </li>
@@ -61,11 +93,22 @@ const GlobalFooter = () => {
 
           {/* Contact */}
           <div>
-            <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-4">Contato</p>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-4"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Contato
+            </p>
             <ul className="space-y-2.5">
               {contactLinks.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-sm text-white/60 hover:text-[#00C2A8] transition-colors">
+                  <a
+                    href={l.href}
+                    className="text-sm transition-colors"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
+                  >
                     {l.label}
                   </a>
                 </li>
@@ -75,7 +118,10 @@ const GlobalFooter = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/30">
+        <div
+          className="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs"
+          style={{ borderColor: "var(--border-default)", color: "var(--text-tertiary)" }}
+        >
           <p>&copy; 2026 DS Treinamentos. Todos os direitos reservados.</p>
           <p>Radar OPME é parte do ecossistema DS Treinamentos</p>
         </div>

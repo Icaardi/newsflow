@@ -5,8 +5,6 @@ import {
   Lock, Clock, ChevronRight, User, MessageCircle,
   X, CheckCircle2, Sparkles, ArrowRight, BookOpen,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -17,6 +15,7 @@ interface Bulletin {
   number: string;
   tag: string;
   tagColor: string;
+  tagBg: string;
   title: string;
   date: string;
   preview: string;
@@ -26,52 +25,42 @@ interface Bulletin {
 
 const bulletins: Bulletin[] = [
   {
-    id: "001",
-    number: "#001",
-    tag: "Regulação",
-    tagColor: "#3B82F6",
+    id: "001", number: "#001", tag: "Regulação",
+    tagColor: "#60A5FA", tagBg: "rgba(59, 130, 246, 0.15)",
     title: "RDC 665/2022: O que muda na prática para gestores hospitalares",
     date: "16 de abril de 2026",
     preview: "A nova resolução da ANVISA redefine os requisitos de gerenciamento de dispositivos médicos. Veja o que você precisa adaptar imediatamente.",
-    readTime: 8,
-    available: true,
+    readTime: 8, available: true,
   },
   {
-    id: "002",
-    number: "#002",
-    tag: "Dados de Mercado",
-    tagColor: "#10B981",
+    id: "002", number: "#002", tag: "Dados de Mercado",
+    tagColor: "#34D399", tagBg: "rgba(16, 185, 129, 0.15)",
     title: "Stents coronários: por que o mesmo dispositivo custa 478% mais caro",
     date: "23 de abril de 2026",
     preview: "Analisamos dados da ANS e identificamos os fatores que explicam a variação brutal de preços. Três ações para sua próxima negociação.",
-    readTime: 10,
-    available: false,
+    readTime: 10, available: false,
   },
   {
-    id: "003",
-    number: "#003",
-    tag: "Auditoria",
-    tagColor: "#F59E0B",
+    id: "003", number: "#003", tag: "Auditoria",
+    tagColor: "#FBBF24", tagBg: "rgba(245, 158, 11, 0.15)",
     title: "Os 5 erros mais comuns em auditorias de OPME (e como evitá-los)",
     date: "30 de abril de 2026",
     preview: "Auditamos mais de 200 processos de compra de OPME no último ano. Estes são os erros que aparecem em 73% dos casos.",
-    readTime: 7,
-    available: false,
+    readTime: 7, available: false,
   },
   {
-    id: "004",
-    number: "#004",
-    tag: "Tendências",
-    tagColor: "#8B5CF6",
+    id: "004", number: "#004", tag: "Tendências",
+    tagColor: "#A78BFA", tagBg: "rgba(139, 92, 246, 0.15)",
     title: "Rastreabilidade digital de DMI: o que o Brasil pode aprender com o modelo europeu",
     date: "7 de maio de 2026",
     preview: "A UDI (Unique Device Identification) já é obrigatória na Europa. Como o Brasil está se preparando e o que muda para sua instituição.",
-    readTime: 9,
-    available: false,
+    readTime: 9, available: false,
   },
 ];
 
 const filterTabs = ["Todos", "Regulação", "Dados de Mercado", "Auditoria", "Tendências"] as const;
+
+const cardSpring = { type: "spring" as const, stiffness: 300, damping: 30, mass: 0.8 };
 
 /* ------------------------------------------------------------------ */
 /*  Bulletin card                                                      */
@@ -96,59 +85,80 @@ function BulletinCard({ bulletin, onLockedClick }: {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
+      transition={cardSpring}
       onClick={handleClick}
-      className="group bg-white rounded-xl border border-[#E5E7EB] shadow-card p-5 cursor-pointer transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5"
+      className="group rounded-lg p-6 cursor-pointer transition-all duration-200"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        border: "1px solid var(--border-default)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-active)";
+        e.currentTarget.style.boxShadow = "0 4px 30px var(--ds-blue-glow)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-default)";
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.transform = "translateY(0)";
+      }}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Tag + status row */}
-          <div className="flex flex-wrap items-center gap-2 mb-2.5">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <span
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-white"
-              style={{ backgroundColor: bulletin.tagColor }}
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
+              style={{ backgroundColor: bulletin.tagBg, color: bulletin.tagColor }}
             >
               {bulletin.tag}
             </span>
             {bulletin.available ? (
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border text-[11px]">
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
+                style={{ backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#34D399" }}
+              >
                 <CheckCircle2 size={10} className="mr-1" />
                 Disponível
-              </Badge>
+              </span>
             ) : (
-              <Badge className="bg-[#E6FAF7] text-[#0F2B3C] border-[#00C2A8]/20 border text-[11px]">
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
+                style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue-light)" }}
+              >
                 <Lock size={10} className="mr-1" />
-                Exclusivo para assinantes
-              </Badge>
+                Exclusivo
+              </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="text-[17px] font-semibold text-[#1A1A2E] leading-snug group-hover:text-[#0F2B3C] transition-colors">
+          <h3 className="text-lg font-medium leading-snug transition-colors" style={{ color: "var(--text-primary)" }}>
             {bulletin.title}
           </h3>
 
           {/* Preview */}
-          <p className="text-sm text-[#6B7280] mt-2 leading-relaxed line-clamp-2">
+          <p className="text-sm mt-2 leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>
             {bulletin.preview}
           </p>
 
           {/* Meta row */}
-          <div className="flex items-center gap-4 mt-3 text-xs text-[#6B7280]">
+          <div className="flex items-center gap-4 mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
             <span>{bulletin.date}</span>
             <span className="flex items-center gap-1">
               <Clock size={12} />
-              {bulletin.readTime} min de leitura
+              <span className="font-mono-metric">{bulletin.readTime}</span> min
             </span>
-            <span className="font-mono-metric text-[#6B7280]/60">{bulletin.number}</span>
+            <span className="font-mono-metric" style={{ opacity: 0.6 }}>{bulletin.number}</span>
           </div>
         </div>
 
-        {/* Arrow */}
+        {/* Arrow / Lock */}
         <div className="shrink-0 mt-1">
           {bulletin.available ? (
-            <ChevronRight size={20} className="text-[#6B7280] group-hover:text-[#00C2A8] transition-colors" />
+            <ChevronRight size={20} style={{ color: "var(--text-tertiary)" }} />
           ) : (
-            <Lock size={18} className="text-[#6B7280]/40" />
+            <Lock size={18} style={{ color: "var(--text-tertiary)", opacity: 0.5 }} />
           )}
         </div>
       </div>
@@ -173,32 +183,46 @@ function PaywallModal({ open, onClose }: { open: boolean; onClose: () => void })
           onClick={onClose}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-[#0F2B3C]/60 backdrop-blur-sm" />
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }} />
 
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-7 z-10"
+            className="relative max-w-md w-full p-7 z-10"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              border: "1px solid var(--border-default)",
+              borderRadius: "20px",
+            }}
           >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-[#6B7280] hover:text-[#1A1A2E] transition-colors"
+              className="absolute top-4 right-4 transition-colors"
+              style={{ color: "var(--text-tertiary)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
             >
               <X size={20} />
             </button>
 
-            <div className="w-12 h-12 rounded-xl bg-[#E6FAF7] flex items-center justify-center mb-5">
-              <Lock size={22} className="text-[#00C2A8]" />
+            <div
+              className="w-14 h-14 rounded-lg flex items-center justify-center mb-5"
+              style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue)" }}
+            >
+              <Lock size={28} />
             </div>
 
-            <h3 className="text-xl font-bold text-[#1A1A2E]">
-              Este boletim é exclusivo para assinantes do Radar OPME
+            <h3
+              className="font-display text-2xl font-normal"
+              style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
+            >
+              Exclusivo para assinantes do Radar OPME
             </h3>
-            <p className="text-sm text-[#6B7280] mt-2 leading-relaxed">
+            <p className="text-sm mt-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               Assine para ter acesso a todo o conteúdo de inteligência e ferramentas da plataforma.
             </p>
 
@@ -209,23 +233,39 @@ function PaywallModal({ open, onClose }: { open: boolean; onClose: () => void })
                 "Checklists e templates para auditoria e compliance",
                 "Comunidade de profissionais OPME-DMI",
               ].map((benefit) => (
-                <li key={benefit} className="flex items-start gap-2.5 text-sm text-[#1A1A2E]">
-                  <CheckCircle2 size={16} className="text-[#00C2A8] mt-0.5 shrink-0" />
+                <li key={benefit} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--text-primary)" }}>
+                  <CheckCircle2 size={16} className="mt-0.5 shrink-0" style={{ color: "var(--ds-blue)" }} />
                   {benefit}
                 </li>
               ))}
             </ul>
 
             <div className="mt-6 space-y-2.5">
-              <Button asChild className="w-full bg-[#00C2A8] hover:bg-[#00A892] text-white">
-                <Link to="/assinar">
-                  Assinar o Radar OPME
-                  <ArrowRight size={16} className="ml-2" />
-                </Link>
-              </Button>
-              <Button variant="ghost" asChild className="w-full text-[#6B7280] hover:text-[#1A1A2E]">
-                <Link to="/">Conhecer a plataforma</Link>
-              </Button>
+              <Link
+                to="/assinar"
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-sm text-sm font-semibold text-white transition-all"
+                style={{
+                  backgroundColor: "var(--ds-magenta)",
+                  boxShadow: "0 0 20px var(--ds-magenta-glow)",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
+              >
+                Assinar o Radar OPME
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/"
+                className="flex items-center justify-center w-full py-2.5 rounded-sm text-sm font-medium transition-colors"
+                style={{
+                  color: "var(--ds-blue)",
+                  border: "1px solid rgba(5, 89, 181, 0.3)",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(5, 89, 181, 0.1)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                Conhecer a plataforma
+              </Link>
             </div>
           </motion.div>
         </motion.div>
@@ -240,17 +280,23 @@ function PaywallModal({ open, onClose }: { open: boolean; onClose: () => void })
 
 function ExpertCard() {
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-card p-5">
+    <div
+      className="rounded-lg p-5"
+      style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+    >
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-          <User size={22} className="text-[#6B7280]" />
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+          style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}
+        >
+          <User size={22} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#1A1A2E]">Débora Soares</p>
-          <p className="text-xs text-[#6B7280]">Editora-chefe</p>
+          <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Débora Soares</p>
+          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Editora-chefe</p>
         </div>
       </div>
-      <p className="text-xs text-[#6B7280] leading-relaxed">
+      <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
         Mestre PUC-PR &bull; Vice-Presidente ABEA &bull; Membro GTE-OPME/ANS &bull; 30+ anos em OPME-DMI
       </p>
     </div>
@@ -259,34 +305,65 @@ function ExpertCard() {
 
 function SubscribeCTACard() {
   return (
-    <div className="bg-[#0F2B3C] rounded-xl p-5 text-white">
-      <Sparkles size={20} className="text-[#00C2A8] mb-3" />
-      <p className="text-sm font-semibold leading-snug">
+    <div
+      className="rounded-lg p-5"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        border: "1px solid var(--ds-blue)",
+        boxShadow: "0 0 30px var(--ds-blue-glow)",
+      }}
+    >
+      <Sparkles size={20} className="mb-3" style={{ color: "var(--ds-blue)" }} />
+      <p className="text-sm font-semibold leading-snug" style={{ color: "var(--text-primary)" }}>
         Acesse todos os boletins + radar de preços + ferramentas
       </p>
-      <Button asChild size="sm" className="mt-4 w-full bg-[#00C2A8] hover:bg-[#00A892] text-white">
-        <Link to="/assinar">
-          Ver planos de fundador
-          <ArrowRight size={14} className="ml-1.5" />
-        </Link>
-      </Button>
+      <Link
+        to="/assinar"
+        className="flex items-center justify-center gap-1.5 mt-4 w-full py-2 rounded-sm text-sm font-semibold text-white transition-all"
+        style={{
+          backgroundColor: "var(--ds-magenta)",
+          boxShadow: "0 0 16px var(--ds-magenta-glow)",
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
+      >
+        Ver planos de fundador
+        <ArrowRight size={14} />
+      </Link>
     </div>
   );
 }
 
 function CommunityCard() {
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-card p-5">
+    <div
+      className="rounded-lg p-5"
+      style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+    >
       <div className="flex items-center gap-2.5 mb-2">
-        <MessageCircle size={18} className="text-[#00C2A8]" />
-        <p className="text-sm font-semibold text-[#1A1A2E]">Comunidade Radar OPME</p>
+        <MessageCircle size={18} style={{ color: "var(--ds-blue)" }} />
+        <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Comunidade Radar OPME</p>
       </div>
-      <p className="text-xs text-[#6B7280] leading-relaxed">
+      <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
         Discussões técnicas, alertas regulatórios e networking no WhatsApp com profissionais OPME-DMI.
       </p>
-      <Button variant="outline" size="sm" className="mt-3 w-full text-xs text-[#6B7280] border-[#E5E7EB] hover:border-[#00C2A8] hover:text-[#0F2B3C]">
+      <button
+        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-sm transition-colors"
+        style={{
+          color: "var(--text-secondary)",
+          border: "1px solid var(--border-default)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "var(--ds-blue)";
+          e.currentTarget.style.color = "var(--ds-blue)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "var(--border-default)";
+          e.currentTarget.style.color = "var(--text-secondary)";
+        }}
+      >
         Saiba mais
-      </Button>
+      </button>
     </div>
   );
 }
@@ -305,37 +382,55 @@ export default function IntelligenceFeed() {
   }, [activeTab]);
 
   return (
-    <div className="bg-[#F8FAFB] min-h-screen">
-      <div className="max-w-6xl mx-auto px-5 py-8">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-primary)" }}>
+      <div className="max-w-6xl mx-auto px-5 py-10">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-3 mb-1">
-            <h2 className="text-2xl font-bold text-[#1A1A2E]">Boletins de Inteligência</h2>
-            <Badge className="bg-[#E6FAF7] text-[#0F2B3C] border-transparent text-[11px] font-medium">
-              <BookOpen size={11} className="mr-1" />
+        <div className="mb-8">
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <h2
+              className="font-display text-4xl md:text-[40px] font-normal"
+              style={{ color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.1 }}
+            >
+              Boletins de Inteligência
+            </h2>
+            <span
+              className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-medium"
+              style={{ backgroundColor: "rgba(5, 89, 181, 0.1)", color: "var(--ds-blue)" }}
+            >
+              <BookOpen size={11} className="mr-1.5" />
               por Débora Soares — DS Treinamentos
-            </Badge>
+            </span>
           </div>
-          <p className="text-[#6B7280]">
+          <p className="text-base" style={{ color: "var(--text-secondary)" }}>
             Análise semanal exclusiva sobre regulação, dados e tendências do mercado OPME-DMI
           </p>
         </div>
 
         {/* Filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {filterTabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                activeTab === tab
-                  ? "bg-[#0F2B3C] text-white"
-                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:border-[#00C2A8] hover:text-[#0F2B3C]"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {filterTabs.map((tab) => {
+            const active = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="px-3.5 py-1.5 rounded-sm text-sm font-medium transition-all duration-150"
+                style={{
+                  backgroundColor: active ? "rgba(5, 89, 181, 0.15)" : "transparent",
+                  color: active ? "var(--ds-blue)" : "var(--text-secondary)",
+                  border: active ? "1px solid rgba(5, 89, 181, 0.3)" : "1px solid transparent",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.backgroundColor = "var(--bg-tertiary)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                {tab}
+              </button>
+            );
+          })}
         </div>
 
         {/* Main layout: feed + sidebar */}
@@ -357,7 +452,7 @@ export default function IntelligenceFeed() {
             </AnimatePresence>
 
             {filtered.length === 0 && (
-              <div className="text-center py-12 text-[#6B7280]">
+              <div className="text-center py-16" style={{ color: "var(--text-tertiary)" }}>
                 <BookOpen size={32} className="mx-auto mb-3 opacity-40" />
                 <p className="text-sm">Nenhum boletim nesta categoria ainda.</p>
               </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
@@ -22,18 +21,19 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-xl border-b border-[#E5E7EB] shadow-sm"
-          : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-16"
+      style={{
+        background: scrolled ? "var(--surface-glass)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px) saturate(1.5)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border-default)" : "1px solid transparent",
+      }}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className={`font-bold text-lg transition-colors ${scrolled ? "text-[#0F2B3C]" : "text-white"}`}>
+          <span className="font-bold text-lg transition-colors" style={{ color: "var(--text-primary)" }}>
             Radar OPME
           </span>
-          <span className={`text-xs font-medium transition-colors ${scrolled ? "text-[#6B7280]" : "text-white/50"}`}>
+          <span className="text-xs font-medium transition-colors" style={{ color: "var(--text-tertiary)" }}>
             by DS Treinamentos
           </span>
         </Link>
@@ -43,9 +43,10 @@ const Header = () => {
             <a
               key={item.label}
               href={item.href}
-              className={`text-sm font-medium transition-colors ${
-                scrolled ? "text-[#6B7280] hover:text-[#0F2B3C]" : "text-white/70 hover:text-white"
-              }`}
+              className="text-sm font-medium transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
             >
               {item.label}
             </a>
@@ -53,50 +54,45 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className={scrolled ? "text-[#6B7280] hover:text-[#0F2B3C]" : "text-white/80 hover:text-white hover:bg-white/10"}
+          <Link
+            to="/login"
+            className="text-sm font-medium px-3 py-1.5 transition-colors"
+            style={{ color: "var(--text-secondary)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
           >
-            <Link to="/login">Entrar</Link>
-          </Button>
-          <Button
-            size="sm"
-            className="rounded-full bg-[#00C2A8] hover:bg-[#00A892] text-white"
-            asChild
+            Entrar
+          </Link>
+          <Link
+            to="/assinar"
+            className="text-sm font-semibold px-5 py-1.5 rounded-sm text-white transition-all"
+            style={{ backgroundColor: "var(--ds-magenta)", boxShadow: "0 0 16px var(--ds-magenta-glow)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
           >
-            <Link to="/assinar">Assinar</Link>
-          </Button>
+            Assinar
+          </Link>
         </div>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className={`md:hidden p-2 transition-colors ${scrolled ? "text-[#0F2B3C]" : "text-white"}`}
+          className="md:hidden p-2"
+          style={{ color: "var(--text-primary)" }}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-[#E5E7EB] p-6 space-y-4">
+        <div className="md:hidden p-6 space-y-4" style={{ backgroundColor: "var(--bg-secondary)", borderBottom: "1px solid var(--border-default)" }}>
           {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="block text-sm font-medium text-[#6B7280] hover:text-[#0F2B3C]"
-              onClick={() => setMobileOpen(false)}
-            >
+            <a key={item.label} href={item.href} className="block text-sm font-medium" style={{ color: "var(--text-secondary)" }} onClick={() => setMobileOpen(false)}>
               {item.label}
             </a>
           ))}
           <div className="flex flex-col gap-2 pt-2">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/login">Entrar</Link>
-            </Button>
-            <Button size="sm" className="bg-[#00C2A8] hover:bg-[#00A892] text-white" asChild>
-              <Link to="/assinar">Assinar</Link>
-            </Button>
+            <Link to="/login" className="text-sm text-center py-2" style={{ color: "var(--text-secondary)" }}>Entrar</Link>
+            <Link to="/assinar" className="text-sm font-semibold text-center py-2 rounded-sm text-white" style={{ backgroundColor: "var(--ds-magenta)" }}>Assinar</Link>
           </div>
         </div>
       )}

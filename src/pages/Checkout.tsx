@@ -278,10 +278,10 @@ const Checkout = () => {
         <div className="space-y-2.5">
           {BENEFITS.map((b) => (
             <div key={b} className="flex items-start gap-2.5">
-              <div className="w-5 h-5 rounded-full bg-success/15 flex items-center justify-center shrink-0 mt-0.5">
-                <Check size={12} className="text-success" />
+              <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue)" }}>
+                <Check size={12} />
               </div>
-              <span className="text-sm text-muted-foreground leading-snug">{b}</span>
+              <span className="text-sm leading-snug" style={{ color: "var(--text-secondary)" }}>{b}</span>
             </div>
           ))}
         </div>
@@ -302,7 +302,7 @@ const Checkout = () => {
         <div className="h-px bg-border" />
         <div className="flex items-center justify-between">
           <span className="font-semibold">Total</span>
-          <span className="text-xl font-bold font-mono-metric text-accent">
+          <span className="text-xl font-bold font-mono-metric" style={{ color: "var(--text-primary)" }}>
             {formatCurrency(total)}
           </span>
         </div>
@@ -314,10 +314,10 @@ const Checkout = () => {
       <div className="grid grid-cols-2 gap-2.5">
         {TRUST_SEALS.map((seal) => (
           <div key={seal.label} className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-success/15 flex items-center justify-center shrink-0">
-              <Check size={11} className="text-success" />
+            <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(16,185,129,0.12)", color: "var(--success)" }}>
+              <Check size={11} />
             </div>
-            <span className="text-xs text-muted-foreground">{seal.label}</span>
+            <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{seal.label}</span>
           </div>
         ))}
       </div>
@@ -328,39 +328,39 @@ const Checkout = () => {
     <div className="min-h-screen bg-background">
       {/* ═══ URGENCY BAR ═══ */}
       <div
-        className="sticky top-0 z-50 text-white text-center py-2.5 px-4"
-        style={{ backgroundColor: "hsl(203, 60%, 15%)" }}
+        className="sticky top-0 z-50 text-center py-2.5 px-4"
+        style={{ backgroundColor: "rgba(192, 0, 126, 0.1)", borderBottom: "1px solid rgba(192, 0, 126, 0.15)" }}
       >
-        <p className="text-xs sm:text-sm font-medium flex items-center justify-center gap-2 flex-wrap">
-          <Clock size={14} className="shrink-0 text-accent" />
+        <p className="text-xs sm:text-sm font-medium flex items-center justify-center gap-2 flex-wrap" style={{ color: "var(--ds-magenta-light)" }}>
+          <Clock size={14} className="shrink-0" style={{ color: "var(--ds-magenta)" }} />
           <span>
             Oferta exclusiva para participantes do{" "}
-            <span className="font-bold">Medical Devices Summit</span> — encerra em
+            <span className="font-bold" style={{ color: "var(--text-primary)" }}>Medical Devices Summit</span> — encerra em
           </span>
-          <span className="font-mono-metric font-bold text-accent text-sm sm:text-base tracking-wide">
+          <span className="font-mono-metric font-bold text-sm sm:text-base tracking-wide" style={{ color: "var(--ds-magenta)" }}>
             {formatTimer(offerSeconds)}
           </span>
         </p>
       </div>
 
       {/* ═══ LOGO HEADER ═══ */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm">
+      <header style={{ borderBottom: "1px solid var(--border-default)", backgroundColor: "var(--bg-secondary)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-center gap-3">
-          <img src={dsLogo} alt="DS Treinamentos" className="h-8" style={{ mixBlendMode: "multiply" }} />
-          <span className="font-bold text-lg tracking-tight">Radar OPME</span>
+          <img src={dsLogo} alt="DS Treinamentos" className="h-8 brightness-0 invert opacity-60" />
+          <span className="font-bold text-lg tracking-tight" style={{ color: "var(--text-primary)" }}>Radar OPME</span>
         </div>
       </header>
 
       {/* ═══ HERO DE REFORÇO ═══ */}
-      <section className="py-10 sm:py-14 px-4 border-b border-border bg-gradient-to-b from-background to-muted/30">
+      <section className="py-10 sm:py-14 px-4" style={{ borderBottom: "1px solid var(--border-default)", background: "radial-gradient(ellipse 80% 50% at 50% 0%, var(--ds-blue-glow), transparent), var(--bg-primary)" }}>
         <div className="max-w-3xl mx-auto text-center">
           <motion.h1
             {...fadeUp(0)}
-            className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight mb-4"
+            className="font-display text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight mb-4"
+            style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
           >
-
             Inteligência de mercado OPME-DMI{" "}
-            <span className="text-accent">na sua mesa de decisão</span>
+            <span style={{ color: "var(--ds-blue-light)" }}>na sua mesa de decisão</span>
           </motion.h1>
 
           <motion.p
@@ -395,8 +395,8 @@ const Checkout = () => {
                 key={i}
                 className="bg-card rounded-xl border border-border p-5 text-left shadow-card hover:shadow-card-hover transition-shadow duration-200"
               >
-                <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-3">
-                  <vp.icon size={20} className="text-accent" />
+                <div className="w-10 h-10 rounded-md flex items-center justify-center mb-3" style={{ backgroundColor: "var(--ds-blue-glow)", color: "var(--ds-blue)" }}>
+                  <vp.icon size={20} />
                 </div>
                 <p className="font-semibold text-sm mb-1">{vp.title}</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">{vp.desc}</p>
@@ -638,10 +638,12 @@ const Checkout = () => {
 
               {/* CTA Button */}
               <div className="space-y-3">
-                <Button
+                <button
                   type="submit"
-                  size="xl"
-                  className="w-full text-base sm:text-lg py-6 h-auto font-bold uppercase tracking-wide"
+                  className="w-full text-base sm:text-lg py-4 h-auto font-bold uppercase tracking-wide rounded-sm text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  style={{ backgroundColor: "var(--ds-magenta)", boxShadow: "0 0 24px var(--ds-magenta-glow)" }}
+                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
                   disabled={loading}
                 >
                   {loading ? (
@@ -654,7 +656,7 @@ const Checkout = () => {
                       Acessar a plataforma — {formatCurrency(total)}
                     </>
                   )}
-                </Button>
+                </button>
                 <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5">
                   <Lock size={12} />
                   Pagamento seguro &bull; Seus dados estão protegidos
@@ -668,21 +670,20 @@ const Checkout = () => {
             {...fadeUp(0.25)}
             className="hidden lg:block lg:sticky lg:top-28"
           >
-            <Card className="shadow-card">
-              <CardContent className="pt-6">
-                <SummaryContent />
-              </CardContent>
-            </Card>
+            <div className="rounded-lg p-6 shadow-card" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid rgba(192, 0, 126, 0.15)" }}>
+              <SummaryContent />
+            </div>
           </motion.div>
         </div>
       </main>
 
       {/* ═══ SOCIAL PROOF ═══ */}
-      <section className="border-t border-border py-12 sm:py-16 px-4 bg-muted/30">
+      <section className="py-12 sm:py-16 px-4" style={{ borderTop: "1px solid var(--border-default)", backgroundColor: "var(--bg-primary)" }}>
         <div className="max-w-5xl mx-auto">
           <motion.h2
             {...fadeUp(0)}
-            className="text-xl sm:text-2xl font-bold text-center mb-10"
+            className="font-display text-xl sm:text-2xl font-normal text-center mb-10"
+            style={{ color: "var(--text-primary)" }}
           >
             O que dizem os membros do Radar OPME
           </motion.h2>
@@ -690,26 +691,20 @@ const Checkout = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <motion.div key={i} {...fadeUp(0.1 + i * 0.1)}>
-                <Card className="h-full shadow-card hover:shadow-card-hover transition-shadow duration-200">
-                  <CardContent className="pt-6">
-                    <div className="flex gap-1 mb-3">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <Star
-                          key={j}
-                          size={14}
-                          className="text-warning fill-warning"
-                        />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4 italic">
-                      "{t.text}"
-                    </p>
-                    <div className="border-t border-border pt-3">
-                      <p className="text-sm font-semibold">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="h-full rounded-lg p-6" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}>
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Star key={j} size={14} className="fill-warning" style={{ color: "var(--warning)" }} />
+                    ))}
+                  </div>
+                  <p className="font-display text-sm leading-relaxed mb-4 italic" style={{ color: "var(--text-secondary)" }}>
+                    "{t.text}"
+                  </p>
+                  <div className="pt-3" style={{ borderTop: "1px solid var(--border-default)" }}>
+                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{t.name}</p>
+                    <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{t.role}</p>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -717,26 +712,22 @@ const Checkout = () => {
       </section>
 
       {/* ═══ EXPERT SECTION ═══ */}
-      <section className="border-t border-border py-12 sm:py-16 px-4 bg-background">
+      <section className="py-12 sm:py-16 px-4" style={{ borderTop: "1px solid var(--border-default)", backgroundColor: "var(--bg-primary)" }}>
         <motion.div {...fadeUp(0)} className="max-w-2xl mx-auto text-center">
           <img
             src={deboraPhoto}
             alt="Débora Soares"
-            className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-accent/20"
+            className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
+            style={{ border: "2px solid rgba(5, 89, 181, 0.3)" }}
           />
-          <h3 className="text-xl font-bold mb-1">Débora Soares</h3>
+          <h3 className="font-display text-xl font-normal mb-1" style={{ color: "var(--text-primary)" }}>Débora Soares</h3>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               Especialista em OPME-DMI &bull; Fundadora da DS Treinamentos
             </p>
-            <img
-              src={dsLogo}
-              alt="DS Treinamentos"
-              className="h-6"
-              style={{ mixBlendMode: "multiply" }}
-            />
+            <img src={dsLogo} alt="DS Treinamentos" className="h-6 brightness-0 invert opacity-50" />
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          <p className="text-sm leading-relaxed max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             Com mais de 30 anos no setor de dispositivos médicos, Débora é referência
             nacional em auditoria e regulação de OPME. Mestre pela PUC-PR, Vice-Presidente da ABEA,
             membro do GTE-OPME/ANS e do IMDRF-Brasil/ANVISA. Fundadora da DS Treinamentos e do Medical Devices Summit.
@@ -745,35 +736,34 @@ const Checkout = () => {
       </section>
 
       {/* ═══ URGENCY FOOTER ═══ */}
-      <footer
-        className="text-white py-10 sm:py-14 px-4 stars-bg"
-        style={{ backgroundColor: "hsl(203, 60%, 15%)" }}
-      >
+      <footer className="py-10 sm:py-14 px-4 stars-bg" style={{ backgroundColor: "#080C15" }}>
         <div className="max-w-3xl mx-auto text-center relative z-10 space-y-5">
-          <div className="flex items-center justify-center gap-2 text-warning">
+          <div className="flex items-center justify-center gap-2" style={{ color: "var(--warning)" }}>
             <AlertTriangle size={20} />
             <span className="font-semibold text-sm sm:text-base">Atenção</span>
           </div>
 
-          <p className="text-base sm:text-lg font-semibold leading-relaxed">
+          <p className="text-base sm:text-lg font-semibold leading-relaxed" style={{ color: "var(--text-primary)" }}>
             O preço de fundador está disponível{" "}
-            <span className="text-accent underline decoration-accent/50 underline-offset-4">
+            <span className="underline underline-offset-4" style={{ color: "var(--ds-magenta-light)", textDecorationColor: "rgba(192,0,126,0.4)" }}>
               apenas durante o Medical Devices Summit
             </span>
           </p>
 
-          <p className="text-sm text-white/60 leading-relaxed">
+          <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
             Após o evento, o preço volta para R$ 497/mês (plano mensal) ou R$ 5.964/ano
             (plano anual). Referência: SIMPRO/Brasíndice custam R$ 300-400/mês só pela tabela de preços.
           </p>
 
-          <Button
-            size="xl"
-            className="text-base font-bold uppercase tracking-wide mt-4"
+          <button
+            className="text-base font-bold uppercase tracking-wide mt-4 px-8 py-3 rounded-sm text-white transition-all"
+            style={{ backgroundColor: "var(--ds-magenta)", boxShadow: "0 0 24px var(--ds-magenta-glow)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
             onClick={scrollToForm}
           >
             Garantir minha vaga agora
-          </Button>
+          </button>
         </div>
       </footer>
 
@@ -783,56 +773,59 @@ const Checkout = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
           onClick={() => setShowExitPopup(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-card rounded-2xl max-w-md w-full p-8 shadow-2xl relative"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="max-w-md w-full p-8 relative"
+            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", borderRadius: "20px" }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setShowExitPopup(false)}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute top-4 right-4 transition-colors"
+              style={{ color: "var(--text-tertiary)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
             >
               <X size={20} />
             </button>
 
             <div className="text-center space-y-4">
-              <h3 className="text-xl font-bold leading-tight">
+              <h3 className="font-display text-xl font-normal leading-tight" style={{ color: "var(--text-primary)" }}>
                 Tem certeza que quer perder o preço de fundador?
               </h3>
 
-              <div className="flex items-start gap-3 text-left bg-muted/50 rounded-xl p-4">
-                <img
-                  src={deboraPhoto}
-                  alt="Débora Soares"
-                  className="w-10 h-10 rounded-full object-cover shrink-0"
-                />
-                <p className="text-sm text-muted-foreground leading-relaxed">
+              <div className="flex items-start gap-3 text-left rounded-md p-4" style={{ backgroundColor: "var(--bg-tertiary)", border: "1px solid var(--border-default)" }}>
+                <img src={deboraPhoto} alt="Débora Soares" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   Após o Medical Devices Summit, o valor volta para R$ 497/mês. Esta é sua
                   única chance de travar o desconto de 40% para sempre.
                 </p>
               </div>
 
-              <Button
-                size="xl"
-                className="w-full text-sm font-bold uppercase tracking-wide"
-                onClick={() => {
-                  setShowExitPopup(false);
-                  scrollToForm();
-                }}
+              <button
+                className="w-full py-3 rounded-sm text-sm font-bold uppercase tracking-wide text-white transition-all"
+                style={{ backgroundColor: "var(--ds-magenta)", boxShadow: "0 0 20px var(--ds-magenta-glow)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
+                onClick={() => { setShowExitPopup(false); scrollToForm(); }}
               >
                 Quero manter meu desconto
-              </Button>
+              </button>
 
               <button
                 type="button"
                 onClick={() => setShowExitPopup(false)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
               >
                 Não, obrigado
               </button>
