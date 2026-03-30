@@ -19,6 +19,7 @@ import ToolsLibrary from "./pages/ToolsLibrary";
 import IntelligenceFeed from "./pages/IntelligenceFeed";
 import BulletinReader from "./pages/BulletinReader";
 import Placeholder from "./pages/Placeholder";
+import MembersArea from "./pages/MembersArea";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
 
               {/* Protected */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/membros" element={<ProtectedRoute><MembersArea /></ProtectedRoute>} />
               <Route path="/configuracoes" element={<ProtectedRoute><Placeholder /></ProtectedRoute>} />
             </Route>
 
