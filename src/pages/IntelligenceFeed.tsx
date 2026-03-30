@@ -2,9 +2,10 @@ import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Lock, Clock, ChevronRight, User, MessageCircle,
+  Lock, Clock, ChevronRight, MessageCircle,
   X, CheckCircle2, Sparkles, ArrowRight, BookOpen,
 } from "lucide-react";
+import deboraPhoto from "@/assets/debora-soares.jpg";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -285,12 +286,12 @@ function ExpertCard() {
       style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
     >
       <div className="flex items-center gap-3 mb-3">
-        <div
-          className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-          style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}
-        >
-          <User size={22} />
-        </div>
+        <img
+          src={deboraPhoto}
+          alt="Débora Soares — Especialista OPME-DMI"
+          className="w-12 h-12 rounded-full object-cover shrink-0"
+          style={{ border: "1px solid var(--border-default)" }}
+        />
         <div>
           <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Débora Soares</p>
           <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Editora-chefe</p>

@@ -10,7 +10,7 @@ import {
   AlertTriangle, Star, X, Sparkles,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-const deboraPhoto = "";
+import deboraPhoto from "@/assets/debora-soares.jpg";
 const dsLogo = "";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

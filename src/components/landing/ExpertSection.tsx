@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User } from "lucide-react";
+import deboraPhoto from "@/assets/debora-soares.jpg";
 
 const sectionAnim = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
@@ -16,12 +16,12 @@ const ExpertSection = () => (
   <section id="expert" className="py-24 lg:py-32" style={{ backgroundColor: "var(--bg-primary)" }}>
     <div className="max-w-5xl mx-auto px-6">
       <motion.div variants={sectionAnim} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6 }} className="flex flex-col md:flex-row items-center gap-12">
-        <div
-          className="w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center shrink-0"
-          style={{ backgroundColor: "var(--bg-tertiary)", border: "2px solid rgba(5, 89, 181, 0.3)" }}
-        >
-          <User size={56} style={{ color: "var(--text-tertiary)" }} />
-        </div>
+        <img
+          src={deboraPhoto}
+          alt="Débora Soares — Especialista OPME-DMI"
+          className="w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full object-cover shrink-0"
+          style={{ border: "2px solid rgba(5, 89, 181, 0.3)" }}
+        />
 
         <div className="flex-1 text-center md:text-left">
           <p className="text-sm font-semibold tracking-wider uppercase mb-2" style={{ color: "var(--ds-blue)" }}>A Expert</p>

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowUp, Sparkles } from "lucide-react";
+import deboraPhoto from "@/assets/debora-soares.jpg";
 
 interface Message {
   id: string;
@@ -124,9 +125,12 @@ export default function RadarAgent({ isOpen, onClose }: { isOpen: boolean; onClo
             {/* Header */}
             <div className="flex items-center justify-between h-16 px-4 shrink-0" style={{ borderBottom: "1px solid var(--border-default)" }}>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "var(--bg-tertiary)" }}>
-                  <Sparkles size={18} style={{ color: "var(--ds-magenta)" }} />
-                </div>
+                <img
+                  src={deboraPhoto}
+                  alt="Débora Soares — Especialista OPME-DMI"
+                  className="w-9 h-9 rounded-full object-cover shrink-0"
+                  style={{ border: "1px solid var(--border-default)" }}
+                />
                 <div>
                   <p className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>Deb.ai</p>
                   <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>Assistente IA &bull; por Débora Soares</p>
