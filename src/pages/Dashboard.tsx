@@ -5,7 +5,7 @@ import {
   FileText, ArrowRight, Clock, Lock, CheckCircle2, Stethoscope, Search,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
 
 /* ------------------------------------------------------------------ */
@@ -85,6 +85,13 @@ function getActiveChecklists(): number {
 
 const cardSpring = { type: "spring" as const, stiffness: 300, damping: 30, mass: 0.8 };
 
+const sparkData = {
+  dispositivos: [10,10,11,11,12,12,12,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14].map((v, i) => ({ v, i })),
+  categorias: [4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6].map((v, i) => ({ v, i })),
+  variacao: [1200,1250,1300,1280,1350,1400,1380,1420,1500,1520,1480,1550,1600,1580,1620,1650,1640,1660,1670,1678,1678,1678,1678,1678,1678,1678,1678,1678,1678,1678].map((v, i) => ({ v, i })),
+  checklists: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].map((v, i) => ({ v, i })),
+};
+
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
@@ -95,19 +102,22 @@ const Dashboard = () => {
   const activeChecklists = useMemo(() => getActiveChecklists(), []);
 
   const metrics = [
-    { label: "Dispositivos monitorados", value: "14", icon: Activity, link: "/radar", color: "var(--ds-blue)" },
-    { label: "Categorias ativas", value: "6", icon: Layers, link: "/radar", color: "var(--ds-blue)" },
-    { label: "Maior variação detectada", value: "1.678%", icon: TrendingUp, link: "/radar", color: "var(--danger)", danger: true },
-    { label: "Checklists em andamento", value: String(activeChecklists), icon: ClipboardCheck, link: "/ferramentas", color: "var(--ds-blue)" },
+    { label: "Dispositivos monitorados", value: "14", icon: Activity, link: "/radar", color: "var(--ds-blue)", spark: sparkData.dispositivos, sparkColor: "#0559B5" },
+    { label: "Categorias ativas", value: "6", icon: Layers, link: "/radar", color: "var(--ds-blue)", spark: sparkData.categorias, sparkColor: "#2B7CD4" },
+    { label: "Maior variação detectada", value: "1.678%", icon: TrendingUp, link: "/radar", color: "var(--danger)", danger: true, spark: sparkData.variacao, sparkColor: "#EF4444" },
+    { label: "Checklists em andamento", value: String(activeChecklists), icon: ClipboardCheck, link: "/ferramentas", color: "var(--ds-blue)", spark: sparkData.checklists, sparkColor: "#10B981" },
   ];
 
   return (
-    <DashboardLayout title={`Bom dia, ${firstName}`}>
+    <div className="p-6 lg:p-8" style={{ backgroundColor: "var(--bg-primary)" }}>
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Subtitle */}
-        <p className="text-sm -mt-2" style={{ color: "var(--text-tertiary)" }}>
-          Seu painel de inteligência OPME-DMI
-        </p>
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Bom dia, {firstName}</h1>
+          <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
+            Seu painel de inteligência OPME-DMI
+          </p>
+        </div>
 
         {/* Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -148,6 +158,20 @@ const Dashboard = () => {
                 <p className="font-mono-metric text-[28px] font-semibold" style={{ color: "var(--text-primary)" }}>
                   {m.value}
                 </p>
+                {/* Sparkline */}
+                <div className="h-10 mt-3 -mx-2 -mb-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={m.spark} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                      <defs>
+                        <linearGradient id={`spark-${i}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={m.sparkColor} stopOpacity={0.15} />
+                          <stop offset="95%" stopColor={m.sparkColor} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Area type="monotone" dataKey="v" stroke={m.sparkColor} strokeWidth={1.5} fill={`url(#spark-${i})`} dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </Link>
             </motion.div>
           ))}
@@ -321,7 +345,7 @@ const Dashboard = () => {
           </div>
         </motion.section>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

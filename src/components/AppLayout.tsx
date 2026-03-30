@@ -1,27 +1,37 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
+import AppSidebar from "./AppSidebar";
 import GlobalFooter from "./GlobalFooter";
+import { useAuth } from "@/contexts/AuthContext";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
 
-const AppLayout = () => {
+export default function AppLayout() {
+  const { isLoggedIn } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <>
       <ScrollToTop />
-      <Navbar />
-      <main className="min-h-[calc(100vh-64px)]">
-        <Outlet />
-      </main>
-      <GlobalFooter />
+      <div className="flex flex-col h-screen">
+        <Navbar onMobileMenuToggle={isLoggedIn ? () => setMobileOpen((p) => !p) : undefined} />
+
+        <div className="flex flex-1 overflow-hidden">
+          {isLoggedIn && (
+            <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+          )}
+
+          <main className="flex-1 overflow-y-auto">
+            <Outlet />
+            {!isLoggedIn && <GlobalFooter />}
+          </main>
+        </div>
+      </div>
     </>
   );
-};
-
-export default AppLayout;
+}
