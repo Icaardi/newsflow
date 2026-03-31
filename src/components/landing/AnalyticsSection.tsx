@@ -26,7 +26,7 @@ const AnalyticsSection = () => {
             métricas em tempo real.
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Na NewsFlow, você acompanha seus indicadores em tempo real e toma decisões de forma precisa.
+            Na Radar OPME, você acompanha seus indicadores em tempo real e toma decisões de forma precisa.
           </p>
         </motion.div>
 

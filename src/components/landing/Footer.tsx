@@ -1,52 +1,36 @@
 import { Link } from "react-router-dom";
 
-const Footer = () => {
-  return (
-    <footer className="border-t border-border py-16">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="font-bold text-lg">NewsFlow</span>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              A primeira plataforma brasileira de newsletters com inteligência artificial.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-sm mb-3">Produto</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#funcionalidades" className="hover:text-accent transition-colors">Funcionalidades</a></li>
-              <li><a href="#ferramentas" className="hover:text-accent transition-colors">Ferramentas</a></li>
-              <li><a href="#analytics" className="hover:text-accent transition-colors">Analytics</a></li>
-              <li><a href="#preço" className="hover:text-accent transition-colors">Preço</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-sm mb-3">Empresa</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-accent transition-colors">Sobre</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Contato</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-sm mb-3">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-accent transition-colors">Termos de Uso</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Privacidade</a></li>
-            </ul>
-          </div>
+const Footer = () => (
+  <footer style={{ backgroundColor: "#080C15", borderTop: "1px solid var(--border-default)" }} className="py-16">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+        <div>
+          <p className="font-bold text-lg mb-1" style={{ color: "var(--text-primary)" }}>Radar OPME</p>
+          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>by DS Treinamentos</p>
         </div>
-        <div className="border-t border-border pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2026 NewsFlow. Todos os direitos reservados.</p>
-          <div className="flex items-center gap-1.5 text-xs bg-card px-3 py-1.5 rounded-full border border-border">
-            🇧🇷 Feito no Brasil
-          </div>
-        </div>
+        <nav className="flex flex-wrap gap-x-8 gap-y-2 text-sm" style={{ color: "var(--text-secondary)" }}>
+          {[
+            { label: "Radar de Preços", to: "/radar" },
+            { label: "Ferramentas", to: "/ferramentas" },
+            { label: "Boletins", to: "/boletins" },
+            { label: "Assinar", to: "/assinar" },
+          ].map((l) => (
+            <Link
+              key={l.to} to={l.to} className="transition-colors"
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-    </footer>
-  );
-};
+      <div className="pt-6 space-y-2" style={{ borderTop: "1px solid var(--border-default)" }}>
+        <p className="text-xs text-center" style={{ color: "var(--text-tertiary)" }}>Parte do ecossistema DS: DS Treinamentos &bull; Medical Devices Summit &bull; Radar OPME</p>
+        <p className="text-xs text-center" style={{ color: "var(--text-tertiary)", opacity: 0.6 }}>&copy; 2026 DS Treinamentos. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+);
 
 export default Footer;

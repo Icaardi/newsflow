@@ -12,28 +12,28 @@ import julianaPires from "@/assets/testimonials/juliana-pires.jpg";
 
 const testimonials = [
   {
-    text: "Migrei minha newsletter de finanças para a NewsFlow e em 2 meses dobrei minha base de assinantes pagos. A plataforma é intuitiva e o checkout com Pix fez toda a diferença para o público brasileiro.",
+    text: "Migrei minha newsletter de finanças para a Radar OPME e em 2 meses dobrei minha base de assinantes pagos. A plataforma é intuitiva e o checkout com Pix fez toda a diferença para o público brasileiro.",
     name: "Marcos Tavares",
     role: "Consultor Financeiro",
     src: marcosTavares,
     rating: 5,
   },
   {
-    text: "Como médica, eu precisava de algo profissional e confiável para compartilhar conteúdo com meus pacientes. A NewsFlow me deu exatamente isso, sem precisar aprender a programar.",
+    text: "Como médica, eu precisava de algo profissional e confiável para compartilhar conteúdo com meus pacientes. A Radar OPME me deu exatamente isso, sem precisar aprender a programar.",
     name: "Dra. Camila Rocha",
     role: "Médica Cardiologista",
     src: draCamilaRocha,
     rating: 5,
   },
   {
-    text: "A IA da NewsFlow me economiza horas por semana. Envio o tema, ela pesquisa e gera um rascunho que preciso apenas ajustar. Minha produtividade triplicou.",
+    text: "A IA da Radar OPME me economiza horas por semana. Envio o tema, ela pesquisa e gera um rascunho que preciso apenas ajustar. Minha produtividade triplicou.",
     name: "Felipe Augusto",
     role: "Jornalista e Escritor",
     src: felipeAugusto,
     rating: 5,
   },
   {
-    text: "Já testei 5 plataformas de newsletter e nenhuma tinha checkout brasileiro de verdade. Na NewsFlow meus assinantes pagam com Pix na hora. Recomendo demais!",
+    text: "Já testei 5 plataformas de newsletter e nenhuma tinha checkout brasileiro de verdade. Na Radar OPME meus assinantes pagam com Pix na hora. Recomendo demais!",
     name: "Ana Beatriz",
     role: "Advogada Tributarista",
     src: anaBeatriz,
@@ -47,7 +47,7 @@ const testimonials = [
     rating: 5,
   },
   {
-    text: "Sou nutricionista e uso a NewsFlow para mandar receitas e dicas semanais. O editor é lindo e meus clientes adoram o conteúdo. Já monetizei em menos de 1 mês.",
+    text: "Sou nutricionista e uso a Radar OPME para mandar receitas e dicas semanais. O editor é lindo e meus clientes adoram o conteúdo. Já monetizei em menos de 1 mês.",
     name: "Juliana Pires",
     role: "Nutricionista",
     src: julianaPires,

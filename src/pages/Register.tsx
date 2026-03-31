@@ -1,18 +1,25 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 const Register = () => {
+  const { isLoggedIn, login } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+
+  if (isLoggedIn) return <Navigate to="/dashboard" replace />;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = "/dashboard";
+    login(email || "usuario@radaropme.com.br", "");
+    navigate("/dashboard");
   };
 
   return (
@@ -24,12 +31,12 @@ const Register = () => {
         className="w-full max-w-md bg-card border border-border rounded-2xl p-8 relative z-10"
       >
         <Link to="/" className="flex items-center gap-2.5 mb-10 justify-center">
-          <span className="font-bold text-xl">NewsFlow</span>
+          <span className="font-bold text-xl">Radar OPME</span>
         </Link>
 
         <h1 className="text-2xl font-bold mb-2 text-center">Crie sua conta</h1>
         <p className="text-muted-foreground mb-8 text-center text-sm">
-          Comece sua newsletter profissional em minutos.
+          Crie sua conta na plataforma de inteligência OPME-DMI
         </p>
 
         <button className="w-full flex items-center justify-center gap-3 border border-border rounded-lg h-11 text-sm font-medium hover:bg-secondary transition-colors mb-6">

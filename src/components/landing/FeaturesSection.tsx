@@ -10,7 +10,7 @@ const tabs = [
     label: "Newsletters",
     icon: Newspaper,
     title: "Publique qualquer tipo de newsletter.",
-    description: "Na NewsFlow, você publica newsletters gratuitas e pagas com facilidade. Nossa plataforma reúne tudo em um só lugar, tornando a criação e monetização do seu conteúdo muito mais simples.",
+    description: "Na Radar OPME, você publica newsletters gratuitas e pagas com facilidade. Nossa plataforma reúne tudo em um só lugar, tornando a criação e monetização do seu conteúdo muito mais simples.",
     cards: [
       { title: "Newsletter Gratuita", desc: "Artigos, curadoria, análises e opiniões para sua audiência." },
       { title: "Newsletter Premium", desc: "Conteúdo exclusivo com assinatura mensal ou anual via Pix/Cartão." },

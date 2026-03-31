@@ -1,44 +1,34 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
-const CTASection = () => {
-  return (
-    <section className="py-28 relative stars-bg bg-sidebar text-sidebar-foreground overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] via-transparent to-transparent pointer-events-none" />
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-3xl mx-auto px-6 text-center relative z-10"
-      >
-        <h2 className="text-3xl md:text-5xl font-extrabold mb-5 text-sidebar-foreground">
-          Comece sua newsletter profissional hoje
+const sectionAnim = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+
+const CTASection = () => (
+  <section className="relative py-24 lg:py-32 stars-bg" style={{ backgroundColor: "var(--bg-primary)" }}>
+    <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, var(--ds-magenta-glow), transparent)" }} />
+    <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
+      <motion.div variants={sectionAnim} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6 }} className="space-y-6">
+        <h2 className="font-display text-3xl md:text-[36px] font-normal leading-tight" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+          Pare de negociar no escuro.
         </h2>
-        <p className="text-sidebar-foreground/70 text-lg mb-8 max-w-xl mx-auto">
-          Junte-se a centenas de experts que já monetizam seu conhecimento com a plataforma mais completa do Brasil.
+        <p className="max-w-lg mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          Junte-se aos profissionais que estão usando dados e inteligência para tomar decisões melhores em OPME.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            variant="ghost"
-            size="xl"
-            className="border border-sidebar-foreground/25 text-sidebar-foreground hover:bg-white/10 hover:text-sidebar-foreground rounded-full"
-            asChild
+        <div className="pt-2">
+          <Link
+            to="/assinar"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-sm text-sm font-semibold text-white transition-all"
+            style={{ backgroundColor: "var(--ds-magenta)", boxShadow: "0 0 24px var(--ds-magenta-glow)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta-light)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--ds-magenta)"; }}
           >
-            <Link to="/login">Fazer login</Link>
-          </Button>
-          <Button variant="default" size="xl" className="rounded-full" asChild>
-            <Link to="/register">
-              Começar a publicar
-              <ArrowUpRight size={18} />
-            </Link>
-          </Button>
+            Garantir preço de fundador <ArrowRight size={18} />
+          </Link>
         </div>
       </motion.div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default CTASection;

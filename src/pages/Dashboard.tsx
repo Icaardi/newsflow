@@ -1,181 +1,351 @@
-import { Users, DollarSign, MailOpen, UserPlus, TrendingUp, TrendingDown } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import {
+  Activity, Layers, TrendingUp, ClipboardCheck, BarChart3,
+  FileText, ArrowRight, Clock, Lock, CheckCircle2, Stethoscope, Search,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { AreaChart, Area, ResponsiveContainer } from "recharts";
+import { useAuth } from "@/contexts/AuthContext";
 
-const metrics = [
-  { label: "Assinantes totais", value: "1.847", change: "+12.3%", positive: true, icon: Users },
-  { label: "MRR", value: "R$ 14.230", change: "+8.1%", positive: true, icon: DollarSign },
-  { label: "Taxa de abertura", value: "67.2%", change: "+3.4%", positive: true, icon: MailOpen },
-  { label: "Novos (7d)", value: "+89", change: "-2.1%", positive: false, icon: UserPlus },
+/* ------------------------------------------------------------------ */
+/*  Data                                                               */
+/* ------------------------------------------------------------------ */
+
+const procedures = [
+  { name: "Angioplastia coronária com stent", specialty: "Cardiologia", devices: 4 },
+  { name: "Artroplastia total de quadril", specialty: "Ortopedia", devices: 3 },
+  { name: "Artrodese de coluna lombar", specialty: "Neurocirurgia", devices: 5 },
+  { name: "Artroplastia total de joelho", specialty: "Ortopedia", devices: 2 },
+  { name: "Implante de marcapasso definitivo", specialty: "Cardiologia", devices: 2 },
 ];
 
-const chartData = [
-  { name: "01/02", assinantes: 1420 },
-  { name: "08/02", assinantes: 1480 },
-  { name: "15/02", assinantes: 1510 },
-  { name: "22/02", assinantes: 1590 },
-  { name: "01/03", assinantes: 1640 },
-  { name: "08/03", assinantes: 1720 },
-  { name: "15/03", assinantes: 1790 },
-  { name: "21/03", assinantes: 1847 },
+const recentBulletins = [
+  {
+    id: "001", tag: "Regulação", tagColor: "#60A5FA", tagBg: "rgba(59,130,246,0.15)",
+    title: "RDC 665/2022: O que muda na prática para gestores hospitalares",
+    date: "16 de abril de 2026", readTime: 8, available: true,
+  },
+  {
+    id: "002", tag: "Dados de Mercado", tagColor: "#34D399", tagBg: "rgba(16,185,129,0.15)",
+    title: "Stents coronários: por que o mesmo dispositivo custa 478% mais caro",
+    date: "23 de abril de 2026", readTime: 10, available: false,
+  },
 ];
 
-const recentEditions = [
-  { title: "Como a IA está mudando a medicina preventiva", date: "21 Mar 2026", status: "Publicada", opens: 1243, clicks: 312 },
-  { title: "5 tendências em telemedicina para 2026", date: "14 Mar 2026", status: "Publicada", opens: 1089, clicks: 287 },
-  { title: "O futuro da prescrição digital", date: "07 Mar 2026", status: "Rascunho", opens: 0, clicks: 0 },
-  { title: "Regulamentação de IA em saúde: o que muda", date: "01 Mar 2026", status: "Agendada", opens: 0, clicks: 0 },
+const quickAccess = [
+  { label: "Radar de Preços", icon: BarChart3, desc: "Consulte preços de referência por categoria", path: "/radar" },
+  { label: "Ferramentas", icon: ClipboardCheck, desc: "Checklists de auditoria e compliance", path: "/ferramentas" },
+  { label: "Boletins", icon: FileText, desc: "Análises semanais de inteligência OPME", path: "/boletins" },
 ];
 
-const statusColors: Record<string, string> = {
-  Publicada: "bg-success/15 text-success",
-  Rascunho: "bg-warning/15 text-warning",
-  Agendada: "bg-accent/15 text-accent",
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+const STORAGE_KEY = "radar-opme-checklists";
+
+function getChecklistProgress(): number {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return 0;
+    const state: Record<string, boolean> = JSON.parse(raw);
+    const checked = Object.values(state).filter(Boolean);
+    // 50 total items across all checklists
+    if (checked.length === 0) return 0;
+    if (checked.length >= 50) return 0; // all complete = 0 in progress
+    return checked.length > 0 ? 1 : 0; // simplified: at least 1 in progress if any checked
+  } catch {
+    return 0;
+  }
+}
+
+function getActiveChecklists(): number {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return 0;
+    const state: Record<string, boolean> = JSON.parse(raw);
+    const prefixes = new Set<string>();
+    for (const [key, val] of Object.entries(state)) {
+      if (val) prefixes.add(key.split("-")[0]);
+    }
+    // Count checklists that have at least one item checked
+    // ap = auditoria precos (20 items), rc = compliance (15 items), qf = qualificacao (15 items)
+    let active = 0;
+    const totals: Record<string, number> = { ap: 20, rc: 15, qf: 15 };
+    for (const prefix of Object.keys(totals)) {
+      const checkedInPrefix = Object.entries(state).filter(([k, v]) => k.startsWith(prefix + "-") && v).length;
+      if (checkedInPrefix > 0 && checkedInPrefix < totals[prefix]) active++;
+    }
+    return active;
+  } catch {
+    return 0;
+  }
+}
+
+const cardSpring = { type: "spring" as const, stiffness: 300, damping: 30, mass: 0.8 };
+
+const sparkData = {
+  dispositivos: [10,10,11,11,12,12,12,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14].map((v, i) => ({ v, i })),
+  categorias: [4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6].map((v, i) => ({ v, i })),
+  variacao: [1200,1250,1300,1280,1350,1400,1380,1420,1500,1520,1480,1550,1600,1580,1620,1650,1640,1660,1670,1678,1678,1678,1678,1678,1678,1678,1678,1678,1678,1678].map((v, i) => ({ v, i })),
+  checklists: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].map((v, i) => ({ v, i })),
 };
 
+/* ------------------------------------------------------------------ */
+/*  Page                                                               */
+/* ------------------------------------------------------------------ */
+
 const Dashboard = () => {
+  const { user } = useAuth();
+  const firstName = user?.name?.split(" ")[0] || "Profissional";
+  const activeChecklists = useMemo(() => getActiveChecklists(), []);
+
+  const metrics = [
+    { label: "Dispositivos monitorados", value: "14", icon: Activity, link: "/radar", color: "var(--ds-blue)", spark: sparkData.dispositivos, sparkColor: "#0559B5" },
+    { label: "Categorias ativas", value: "6", icon: Layers, link: "/radar", color: "var(--ds-blue)", spark: sparkData.categorias, sparkColor: "#2B7CD4" },
+    { label: "Maior variação detectada", value: "1.678%", icon: TrendingUp, link: "/radar", color: "var(--danger)", danger: true, spark: sparkData.variacao, sparkColor: "#EF4444" },
+    { label: "Checklists em andamento", value: String(activeChecklists), icon: ClipboardCheck, link: "/ferramentas", color: "var(--ds-blue)", spark: sparkData.checklists, sparkColor: "#10B981" },
+  ];
+
   return (
-    <DashboardLayout title="Bom dia, Leonardo 👋">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="p-6 lg:p-8" style={{ backgroundColor: "var(--bg-primary)" }}>
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Bom dia, {firstName}</h1>
+          <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
+            Seu painel de inteligência OPME-DMI
+          </p>
+        </div>
+
         {/* Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {metrics.map((m, i) => (
             <motion.div
               key={m.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-card-hover transition-shadow duration-200"
+              transition={{ ...cardSpring, delay: i * 0.08 }}
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-muted-foreground">{m.label}</span>
-                <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">
-                  <m.icon size={18} className="text-accent" />
+              <Link
+                to={m.link}
+                className="block rounded-lg p-6 transition-all duration-200"
+                style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-active)";
+                  e.currentTarget.style.boxShadow = "0 0 30px var(--ds-blue-glow)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-default)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                    {m.label}
+                  </span>
+                  <div
+                    className="w-9 h-9 rounded-md flex items-center justify-center"
+                    style={{
+                      backgroundColor: m.danger ? "rgba(239,68,68,0.1)" : "var(--ds-blue-glow)",
+                      color: m.color,
+                    }}
+                  >
+                    <m.icon size={18} />
+                  </div>
                 </div>
-              </div>
-              <p className="text-2xl font-bold font-mono-metric mb-1">{m.value}</p>
-              <div className="flex items-center gap-1">
-                {m.positive ? (
-                  <TrendingUp size={14} className="text-success" />
-                ) : (
-                  <TrendingDown size={14} className="text-destructive" />
-                )}
-                <span className={`text-xs font-medium ${m.positive ? "text-success" : "text-destructive"}`}>
-                  {m.change}
-                </span>
-                <span className="text-xs text-muted-foreground">vs mês anterior</span>
-              </div>
+                <p className="font-mono-metric text-[28px] font-semibold" style={{ color: "var(--text-primary)" }}>
+                  {m.value}
+                </p>
+                {/* Sparkline */}
+                <div className="h-10 mt-3 -mx-2 -mb-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={m.spark} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                      <defs>
+                        <linearGradient id={`spark-${i}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={m.sparkColor} stopOpacity={0.15} />
+                          <stop offset="95%" stopColor={m.sparkColor} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Area type="monotone" dataKey="v" stroke={m.sparkColor} strokeWidth={1.5} fill={`url(#spark-${i})`} dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
 
-        {/* Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-card rounded-xl border border-border p-6 shadow-card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-semibold">Crescimento de assinantes</h2>
-            <div className="flex gap-2">
-              {["30d", "60d", "90d"].map((period, i) => (
-                <button
-                  key={period}
-                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                    i === 0
-                      ? "bg-accent/10 text-accent"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {period}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorAssinantes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(172, 100%, 38%)" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="hsl(172, 100%, 38%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "hsl(220, 9%, 46%)" }} stroke="hsl(220, 13%, 91%)" />
-                <YAxis tick={{ fontSize: 12, fill: "hsl(220, 9%, 46%)" }} stroke="hsl(220, 13%, 91%)" />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "8px",
-                    border: "1px solid hsl(220, 13%, 91%)",
-                    backgroundColor: "hsl(0, 0%, 100%)",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                    fontSize: "13px",
-                    color: "hsl(240, 28%, 14%)",
+        {/* Quick access */}
+        <section>
+          <h2 className="text-base font-semibold mb-4" style={{ color: "var(--text-primary)" }}>Acesso rápido</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {quickAccess.map((item, i) => (
+              <motion.div
+                key={item.path}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...cardSpring, delay: 0.3 + i * 0.08 }}
+              >
+                <Link
+                  to={item.path}
+                  className="block rounded-lg p-6 transition-all duration-200 group"
+                  style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border-active)";
+                    e.currentTarget.style.boxShadow = "0 0 30px var(--ds-blue-glow)";
                   }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="assinantes"
-                  stroke="hsl(172, 100%, 38%)"
-                  strokeWidth={2}
-                  fill="url(#colorAssinantes)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border-default)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <div
+                    className="w-11 h-11 rounded-md flex items-center justify-center mb-4"
+                    style={{ backgroundColor: "rgba(5, 89, 181, 0.1)", color: "var(--ds-blue)" }}
+                  >
+                    <item.icon size={22} />
+                  </div>
+                  <h3 className="text-[15px] font-medium mb-1" style={{ color: "var(--text-primary)" }}>{item.label}</h3>
+                  <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{item.desc}</p>
+                  <span className="inline-flex items-center gap-1 text-sm font-medium" style={{ color: "var(--ds-blue)" }}>
+                    Acessar <ArrowRight size={14} />
+                  </span>
+                </Link>
+              </motion.div>
+            ))}
           </div>
-        </motion.div>
+        </section>
 
-        {/* Recent editions */}
-        <motion.div
+        {/* Procedures table */}
+        <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-card rounded-xl border border-border shadow-card overflow-hidden"
+          transition={{ ...cardSpring, delay: 0.5 }}
         >
-          <div className="p-6 pb-0">
-            <h2 className="font-semibold">Últimas edições</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>Procedimentos e Dispositivos</h2>
+            <Link
+              to="/procedimentos"
+              className="text-sm font-medium flex items-center gap-1 transition-colors"
+              style={{ color: "var(--ds-blue)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue-light)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+            >
+              Ver tabela completa <ArrowRight size={14} />
+            </Link>
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="rounded-lg overflow-hidden"
+            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+          >
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left text-xs font-medium text-muted-foreground px-6 py-3">Título</th>
-                  <th className="text-left text-xs font-medium text-muted-foreground px-6 py-3 hidden sm:table-cell">Data</th>
-                  <th className="text-left text-xs font-medium text-muted-foreground px-6 py-3">Status</th>
-                  <th className="text-right text-xs font-medium text-muted-foreground px-6 py-3 hidden md:table-cell">Aberturas</th>
-                  <th className="text-right text-xs font-medium text-muted-foreground px-6 py-3 hidden md:table-cell">Cliques</th>
+                <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
+                  <th className="text-left text-xs font-medium uppercase tracking-wider px-6 py-3" style={{ color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                    Procedimento
+                  </th>
+                  <th className="text-left text-xs font-medium uppercase tracking-wider px-6 py-3 hidden sm:table-cell" style={{ color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                    Especialidade
+                  </th>
+                  <th className="text-right text-xs font-medium uppercase tracking-wider px-6 py-3" style={{ color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                    Dispositivos
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {recentEditions.map((edition) => (
+                {procedures.map((proc, i) => (
                   <tr
-                    key={edition.title}
-                    className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                    key={proc.name}
+                    className="transition-colors cursor-pointer"
+                    style={{ borderBottom: i < procedures.length - 1 ? "1px solid var(--border-default)" : "none" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--bg-tertiary)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
                   >
-                    <td className="px-6 py-4 text-sm font-medium max-w-xs truncate">{edition.title}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground hidden sm:table-cell">{edition.date}</td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColors[edition.status]}`}>
-                        {edition.status}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <Stethoscope size={16} style={{ color: "var(--text-tertiary)" }} />
+                        <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{proc.name}</span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-right font-mono-metric hidden md:table-cell">
-                      {edition.opens > 0 ? edition.opens.toLocaleString() : "—"}
+                    <td className="px-6 py-4 hidden sm:table-cell">
+                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{proc.specialty}</span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-right font-mono-metric hidden md:table-cell">
-                      {edition.clicks > 0 ? edition.clicks : "—"}
+                    <td className="px-6 py-4 text-right">
+                      <span className="font-mono-metric text-sm font-medium" style={{ color: "var(--text-primary)" }}>{proc.devices}</span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </motion.section>
+
+        {/* Recent bulletins */}
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...cardSpring, delay: 0.6 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>Últimos Boletins</h2>
+            <Link
+              to="/boletins"
+              className="text-sm font-medium flex items-center gap-1 transition-colors"
+              style={{ color: "var(--ds-blue)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ds-blue-light)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ds-blue)"; }}
+            >
+              Ver todos <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {recentBulletins.map((b) => (
+              <Link
+                key={b.id}
+                to={b.available ? `/boletins/${b.id}` : "/boletins"}
+                className="block rounded-lg p-5 transition-all duration-200"
+                style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-active)";
+                  e.currentTarget.style.boxShadow = "0 0 30px var(--ds-blue-glow)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-default)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                    style={{ backgroundColor: b.tagBg, color: b.tagColor }}
+                  >
+                    {b.tag}
+                  </span>
+                  {!b.available && (
+                    <Lock size={12} style={{ color: "var(--text-tertiary)" }} />
+                  )}
+                  {b.available && (
+                    <CheckCircle2 size={12} style={{ color: "var(--success)" }} />
+                  )}
+                </div>
+                <h3 className="text-sm font-medium leading-snug mb-2" style={{ color: "var(--text-primary)" }}>
+                  {b.title}
+                </h3>
+                <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                  <span>{b.date}</span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={11} />
+                    <span className="font-mono-metric">{b.readTime}</span> min
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

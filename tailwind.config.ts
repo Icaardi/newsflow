@@ -14,6 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
+        display: ['"Instrument Serif"', 'Georgia', 'serif'],
         sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
@@ -46,11 +47,11 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
         success: {
-          DEFAULT: "hsl(var(--success))",
+          DEFAULT: "hsl(var(--success-hsl))",
           foreground: "hsl(var(--success-foreground))",
         },
         warning: {
-          DEFAULT: "hsl(var(--warning))",
+          DEFAULT: "hsl(var(--warning-hsl))",
           foreground: "hsl(var(--warning-foreground))",
         },
         popover: {
@@ -71,13 +72,38 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* DS Treinamentos tokens as Tailwind classes */
+        ds: {
+          blue: "var(--ds-blue)",
+          "blue-deep": "var(--ds-blue-deep)",
+          "blue-light": "var(--ds-blue-light)",
+          magenta: "var(--ds-magenta)",
+          "magenta-light": "var(--ds-magenta-light)",
+          teal: "var(--ds-teal)",
+        },
+      },
+      backgroundColor: {
+        "ds-primary": "var(--bg-primary)",
+        "ds-secondary": "var(--bg-secondary)",
+        "ds-tertiary": "var(--bg-tertiary)",
+        "ds-elevated": "var(--bg-elevated)",
+      },
+      textColor: {
+        "ds-primary": "var(--text-primary)",
+        "ds-secondary": "var(--text-secondary)",
+        "ds-tertiary": "var(--text-tertiary)",
+      },
+      borderColor: {
+        "ds-default": "var(--border-default)",
+        "ds-hover": "var(--border-hover)",
+        "ds-active": "var(--border-active)",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-        xl: "1rem",
-        "2xl": "1.25rem",
+        sm: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "24px",
+        "2xl": "32px",
       },
       keyframes: {
         "accordion-down": {

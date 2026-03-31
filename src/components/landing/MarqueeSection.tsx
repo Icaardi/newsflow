@@ -11,7 +11,7 @@ const MarqueeSection = () => {
     >
       <div className="text-center">
         <span className="text-lg md:text-xl font-bold text-foreground/80 tracking-wide">
-          Centenas de usuários escolhem NewsFlow todos os dias!
+          Centenas de usuários escolhem Radar OPME todos os dias!
         </span>
       </div>
     </motion.section>
